@@ -28,7 +28,22 @@ class Controller1D():
         - U (float): total upward thrust
         """
         U = 0
+        
+        control_mode = "PDFF"
+        if control_mode == "P":
+            U = self.kp_z * (state.z_pos - setpoint.z_pos)
 
-        # your code here
+        elif control_mode == "PD":
+            # Example gains: Kp = 25, Kd = 15
+            z_pos_error = setpoint.z_pos - state.z_pos
+            z_vel_error = setpoint.z_vel - state.z_vel
+            U = self.kp_z * z_pos_error + self.kd_z * z_vel_error
+
+        elif control_mode == "PDFF":
+            # Example gains: 
+            z_pos_error = setpoint.z_pos - state.z_pos
+            z_vel_error = setpoint.z_vel - state.z_vel
+            force_ff = self.params.mass * self.params.g # Force = mg
+            U = self.kp_z * z_pos_error + self.kd_z * z_vel_error + force_ff
 
         return U
