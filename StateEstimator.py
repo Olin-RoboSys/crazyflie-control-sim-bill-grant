@@ -1,6 +1,6 @@
 import numpy as np
 
-from utils import State
+from utils import State, CrazyflieParams
 
 class StateEstimator1D():
     """
@@ -9,6 +9,10 @@ class StateEstimator1D():
 
     You are to implement the "compute" method.
     """
+
+    params: CrazyflieParams = CrazyflieParams()
+    state: State = State()
+
     def __init__(self, params, init_state):
         """
         Inputs:
@@ -17,9 +21,9 @@ class StateEstimator1D():
         """
 
         # your code here
-
-        pass
-        
+        self.params = params
+        self.state = init_state
+        self.P = np.diag([0.1**2 , 0.1]) # sigma^2_z comes from the simulated sensor noise. Unsure what to use for sigma^2_zdot
 
     def compute(self, z_meas, U, time_delta):
         """
@@ -36,6 +40,44 @@ class StateEstimator1D():
         """
         filtered_state = State()
 
-        # your code here
+        # Recreate state vector as an np vector
+        X = np.array(   [
+            [self.state.z_pos],
+            [self.state.z_vel]
+        ])
 
+        # Double integrator dynamics in discrete time
+        A = np.array([
+            [1, time_delta],
+            [0, 1]
+        ])
+
+        # Input force vector: Effects of gravity and control thrust
+        Bu = np.array([
+            [0],
+            [-time_delta*self.params.g + (time_delta / self.params.mass) * U]
+        ])
+
+        # Observer model: Only the z_pos is observable
+        C = np.array([[1, 0]])
+                
+        Q = np.diag([0, 0.01])      # Process covariance
+        R = 0.01      # Measurement covariance
+
+        # Predict:
+        X_predicted = A @ X + Bu
+        P_predicted = A @ self.P @ A.T + Q
+
+        # Update:
+        K = P_predicted @ C.T @ np.linalg.inv(C @ P_predicted @ C.T + R)
+        X_next = X_predicted + K @ (z_meas - C @ X_predicted)
+        P_next = (1 - K @ C) @ P_predicted
+
+        X_next = X_next.flatten()
+        filtered_state.z_pos = X_next[0]
+        filtered_state.z_vel = X_next[1]
+
+        self.state = filtered_state
+        self.P = P_next
+        
         return filtered_state
