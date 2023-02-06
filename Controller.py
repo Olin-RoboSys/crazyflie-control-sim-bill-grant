@@ -63,7 +63,6 @@ class Controller1D():
             z_pos_error = setpoint.z_pos - state.z_pos
             z_vel_error = setpoint.z_vel - state.z_vel
             self.integrator = self.integrator + z_pos_error * 0.05
-            print(f"Integrator: {self.integrator}")
             force_ff = self.params.mass * self.params.g # Force = mg
 
             U = self.kp_z * z_pos_error + self.kd_z * z_vel_error + force_ff + self.ki_z * self.integrator
