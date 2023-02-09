@@ -61,8 +61,8 @@ class StateEstimator1D():
         # Observer model: Only the z_pos is observable
         C = np.array([[1, 0]])
                 
-        Q = np.diag([0, 0.01])      # Process covariance
-        R = 0.01      # Measurement covariance
+        Q = np.diag([0.01, 0.01])      # Process covariance
+        R = 0.1      # Measurement covariance
 
         # Predict:
         X_predicted = A @ X + Bu
@@ -71,7 +71,7 @@ class StateEstimator1D():
         # Update:
         K = P_predicted @ C.T @ np.linalg.inv(C @ P_predicted @ C.T + R)
         X_next = X_predicted + K @ (z_meas - C @ X_predicted)
-        P_next = (1 - K @ C) @ P_predicted
+        P_next = (np.eye(2) - K @ C) @ P_predicted
 
         X_next = X_next.flatten()
         filtered_state.z_pos = X_next[0]
@@ -79,5 +79,8 @@ class StateEstimator1D():
 
         self.state = filtered_state
         self.P = P_next
+
+        print("P matrix:")
+        print(self.P)
         
         return filtered_state
