@@ -28,6 +28,8 @@ class CrazyflieParams:
     max_angle: float = 40*math.pi/180
     maxT:   float = 2.5*mass*g
     minT:   float = 0.05*mass*g
+    # maxT:   float = 1000
+    # minT: float=-1000
 
 
 @dataclass
@@ -47,6 +49,7 @@ class SimData:
     U_clamped :     List[float] = field(default_factory=list)
     z_pos_raw :     List[float] = field(default_factory=list)
     z_pos_error :   List[float] = field(default_factory=list)
+    z_pos_true :    List[float] = field(default_factory=list)
 
 
 @dataclass

@@ -49,7 +49,7 @@ def run_sim(args):
 
     # set the set_point/desired state
     set_point = State
-    set_point.z_pos = 8.0
+    set_point.z_pos = 1.0
     set_point.z_vel = 0.0
 
     while curr_time < sim_time:
@@ -60,6 +60,9 @@ def run_sim(args):
             z_pos_raw = quad_dynamics.TOF_sensor()
             # estimate state using kalman filter
             state = state_estimator.compute(z_pos_raw, thrust, time_delta)
+
+            true_state = quad_dynamics.fake_perfect_sensor()
+            z_true = true_state.z_pos
         else:
             # read "fake perfect" state directly from dynamics
             state = quad_dynamics.fake_perfect_sensor()
@@ -76,7 +79,7 @@ def run_sim(args):
 
         # update plot
         if sim_params.state_estimation_flag:
-            quad_sim.update_plot(state, set_point, z_pos_raw, thrust)
+            quad_sim.update_plot(state, set_point, z_pos_raw, thrust, z_true)
         else:
             quad_sim.update_plot(state, set_point, state.z_pos, thrust)
            

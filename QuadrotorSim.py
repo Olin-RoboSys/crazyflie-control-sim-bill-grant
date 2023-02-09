@@ -52,9 +52,9 @@ class Quadrotor1D():
             self.fig.suptitle("1D Quadrotor Altitude Control", fontsize=16)
 
 
-        self.update_plot(init_state, init_state, 0, 0)
+        self.update_plot(init_state, init_state, 0, 0, 0)
 
-    def update_plot(self, state, set_point, z_pos_raw, U):
+    def update_plot(self, state, set_point, z_pos_raw, U, z_pos_true):
         self.x = 0.
         self.z = state.z_pos
         self.set_point_z = set_point.z_pos
@@ -65,6 +65,7 @@ class Quadrotor1D():
         self.sim_data.U_clamped.append(np.clip(U, self.cfparams.minT, self.cfparams.maxT))
         self.sim_data.z_pos_raw.append(z_pos_raw)
         self.sim_data.z_pos_error.append(set_point.z_pos - state.z_pos)
+        self.sim_data.z_pos_true.append(z_pos_true)
         self.itx += 1
 
         self.z_vel_raw = self.diff(self.sim_data.z_pos_raw)
@@ -112,6 +113,7 @@ class Quadrotor1D():
         self.sub2.set_ylabel('error [m]')
 
         ### z position plot
+        self.sub3.plot(t, self.sim_data.z_pos_true, 'k', label="true")
         self.sub3.plot(t, self.sim_data.z_pos_raw, 'r-', label='raw meas')
         self.sub3.plot(t, self.sim_data.z_pos, 'b', label='filtered')
         self.sub3.hlines(self.set_point_z, 0, t[self.itx-1], colors='black', linestyles='--')
