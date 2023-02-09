@@ -54,7 +54,10 @@ class Quadrotor1D():
 
         self.update_plot(init_state, init_state, 0, 0, 0)
 
-    def update_plot(self, state, set_point, z_pos_raw, U, z_pos_true):
+    def update_plot(self, state, set_point, z_pos_raw, U, z_pos_true=None):
+        if z_pos_true is None:
+            z_pos_true = state.z_pos
+
         self.x = 0.
         self.z = state.z_pos
         self.set_point_z = set_point.z_pos

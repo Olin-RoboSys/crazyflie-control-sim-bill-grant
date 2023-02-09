@@ -61,8 +61,8 @@ class StateEstimator1D():
         # Observer model: Only the z_pos is observable
         C = np.array([[1, 0]])
                 
-        Q = np.diag([0.01, 0.01])      # Process covariance
-        R = 0.1      # Measurement covariance
+        Q = np.diag([0.0, 0.0001])      # Process covariance
+        R = 0.01      # Measurement covariance
 
         # Predict:
         X_predicted = A @ X + Bu

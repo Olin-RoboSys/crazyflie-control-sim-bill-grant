@@ -49,7 +49,7 @@ def run_sim(args):
 
     # set the set_point/desired state
     set_point = State
-    set_point.z_pos = 1.0
+    set_point.z_pos = 8.0
     set_point.z_vel = 0.0
 
     while curr_time < sim_time:
